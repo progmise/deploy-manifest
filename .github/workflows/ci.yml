@@ -1,0 +1,11 @@
+name: CI Checks
+
+on:
+  pull_request:
+    branches: [main]
+
+jobs:
+  ci:
+    name: Orch CI
+    uses: progmise/reusable-workflows/.github/workflows/orch-ci.yml@v1
+    secrets: inherit
