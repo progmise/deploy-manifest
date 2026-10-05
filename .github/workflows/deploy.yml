@@ -14,6 +14,10 @@ on:
         type: choice
         options: [pro, cert, pre]
 
+permissions:
+  contents: read
+  actions: read
+
 jobs:
   deploy:
     name: Orch Deploy
