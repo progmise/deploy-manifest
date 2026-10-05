@@ -1,0 +1,24 @@
+name: Deploy
+
+on:
+  workflow_dispatch:
+    inputs:
+      version:
+        description: 'Manifest release version (e.g. 1.0.0)'
+        required: true
+        type: string
+      environment:
+        description: 'Target environment'
+        required: false
+        default: pro
+        type: choice
+        options: [pro, cert, pre]
+
+jobs:
+  deploy:
+    name: Orch Deploy
+    uses: progmise/reusable-workflows/.github/workflows/orch-deploy.yml@v1
+    secrets: inherit
+    with:
+      version: ${{ inputs.version }}
+      environment: ${{ inputs.environment }}

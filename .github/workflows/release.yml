@@ -1,0 +1,11 @@
+name: Release
+
+on:
+  push:
+    branches: [main]
+
+jobs:
+  release:
+    name: Orch Release
+    uses: progmise/reusable-workflows/.github/workflows/orch-release.yml@v1
+    secrets: inherit

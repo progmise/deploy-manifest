@@ -1,0 +1,11 @@
+# Deploy manifest — one released set of components deployable together.
+# version: bump it per release (semver). A PR bumps it; merge creates a draft
+# GitHub Release; publishing the release approves it for `deploy.yml`.
+# components[]: repo = GitHub repo, tag = existing git tag (its Docker image
+# <DOCKER_USERNAME>/<repo>:<tag> must exist), needs = deploy-after deps.
+version: 1.0.0
+components:
+  - name: loans-api
+    repo: progmise/loans-api
+    tag: "0.1.0"
+    needs: []
