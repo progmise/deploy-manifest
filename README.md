@@ -7,16 +7,15 @@ components (repo + tag + dependencies) to deploy together.
 ## `manifest.yml` schema
 
 ```yaml
-version: 1.1.0                    # semver — merge to main drafts release v1.1.0
+version: 1.2.0                    # semver — merge to main drafts release v1.2.0
 environments:                     # optional — declared deploy targets
   - name: pro
     type: production
-infrastructures:                  # optional — infra targets per env
-  - id: loans-api-pro
-    type: vercel                  # vercel | artifact-store | ...
-    env: pro                      # must match an environments[].name
-    project: loans-api            # provider-specific fields are free-form
-    credentialsId: VERCEL_TOKEN   # name of the GitHub secret in the consumer
+    infrastructures:              # infra targets nested under each env (OAM)
+      - id: loans-api-pro
+        type: vercel              # vercel | artifact-store | ...
+        project: loans-api        # provider-specific fields are free-form
+        credentialsId: VERCEL_TOKEN  # name of the secret in the consumer
 components:
   - name: loans-api
     repo: progmise/loans-api
@@ -25,13 +24,13 @@ components:
     infra: [loans-api-pro]        # optional — infra ids this component targets
 ```
 
-Validation rules (CI): semver `version`, unique names/ids, `needs` ⊆ component
-names (acyclic), each `repo:tag` exists, env names of `infrastructures[].env` ⊆
-`environments[].name`, `components[].infra` ⊆ `infrastructures[].id`. At deploy
-time the `environment` input must exist in `environments` (when declared) and a
-component bound via `infra` fails if none of its targets lives in that env.
-`credentialsId` documents which secret the *consumer repo* must carry — values
-never live here.
+Validation rules (CI): semver `version`, unique env/component names and infra
+ids, each `environments[].infrastructures[]` entry has `id` + `type`, `needs` ⊆
+component names (acyclic), each `repo:tag` exists, `components[].infra` ⊆ infra
+ids. At deploy time the `environment` input must exist in `environments` (when
+declared) and a component bound via `infra` fails if none of its targets lives
+in that env. `credentialsId` documents which secret the *consumer repo* must
+carry — values never live here.
 
 ## Flow
 
