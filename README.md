@@ -11,7 +11,7 @@ flowchart LR
     PR["PR bumps manifest.yml"] -->|"ci.yml → orch-ci"| V["Validate:<br/>schema, semver, tags,<br/>Docker images exist"]
     M["merge → main"] -->|"release.yml → orch-release"| R["draft GitHub<br/>Release v&lt;version&gt;<br/>+ mermaid graph"]
     R --> P["publish release<br/>= approval"]
-    P -->|"deploy.yml → orch-deploy"| D["topo-sort by needs<br/>→ dispatch api-deploy<br/>per component, level by level"]
+    P -->|"deploy.yml → orch-deploy"| D["topo-sort by needs<br/>→ dispatch app-deploy<br/>per component, level by level"]
 ```
 
 1. **PR** that bumps `version` and adjusts `components` → CI validates the
@@ -21,7 +21,7 @@ flowchart LR
 4. **Run Deploy** (Actions → Deploy) with `version` + `environment`
    (`pro`/`cert`/`pre` — must be in `vars.DEPLOY_ENVIRONMENTS`). Components
    deploy level by level following `needs`; each repo's `deploy.yml`
-   (`api-deploy`) does the actual Vercel deploy.
+   (`app-deploy`) does the actual Vercel deploy.
 
 ## Setup
 
