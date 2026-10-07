@@ -15,8 +15,10 @@ environments:                     # optional — declared deploy targets
       - id: loans-api-pro
         type: vercel              # vercel | artifact-store | ...
         properties:               # free-form provider fields (OAM style)
-          project: loans-api
-          credentialsId: VERCEL_TOKEN  # name of the secret in the consumer
+          project: loans-api      # Vercel project name (literal, non-secret)
+          credentialsId: VERCEL_TOKEN    # GitHub *secret* name in consumer
+          orgIdVar: VERCEL_ORG_ID        # GitHub *variable* name in consumer
+          projectIdVar: VERCEL_PROJECT_ID
 components:
   - name: loans-api
     repo: progmise/loans-api
@@ -30,8 +32,9 @@ ids, each `environments[].infrastructures[]` entry has `id` + `type`, `needs` �
 component names (acyclic), each `repo:tag` exists, `components[].infra` ⊆ infra
 ids. At deploy time the `environment` input must exist in `environments` (when
 declared) and a component bound via `infra` fails if none of its targets lives
-in that env. `credentialsId` documents which secret the *consumer repo* must
-carry — values never live here.
+in that env. Reference naming convention: `credentialsId`/`passwordId` name a
+GitHub **secret** in the consumer repo, `*Var`/`usernameId` name a GitHub
+**variable** — values never live here.
 
 ## Flow
 
