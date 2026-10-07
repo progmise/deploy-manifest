@@ -2,9 +2,9 @@
 # version: bump it per release (semver). A PR bumps it; merge creates a draft
 # GitHub Release; publishing the release approves it for `deploy.yml`.
 # environments[]: declared deploy targets (name + type), each carrying its
-# own infrastructures[] — the OAM model. Infra entries are free-form fields
-# plus required `id`/`type` (e.g. type: vercel uses the consumer repo's
-# VERCEL_* secrets/vars; credentialsId names the GitHub secret it must have).
+# own infrastructures[] — the OAM model. Infra entries require `id`/`type`
+# plus a free-form `properties:` map (e.g. type: vercel uses the consumer
+# repo's VERCEL_* secrets/vars; credentialsId names the GitHub secret).
 # components[]: repo = GitHub repo, tag = existing git tag (its Docker image
 # <DOCKER_USERNAME>/<repo>:<tag> must exist), needs = deploy-after deps,
 # infra = infrastructure ids this component deploys to (optional; a bound
@@ -16,12 +16,16 @@ environments:
     infrastructures:
       - id: loans-api-pro
         type: vercel
-        project: loans-api
-        credentialsId: VERCEL_TOKEN
+        properties:
+          project: loans-api
+          credentialsId: VERCEL_TOKEN
       - id: docker-hub
         type: artifact-store
-        registry: docker.io
-        namespace: progmise
+        properties:
+          registry: docker.io
+          project-path: progmise
+          usernameId: DOCKER_USERNAME
+          passwordId: DOCKER_TOKEN
 components:
   - name: loans-api
     repo: progmise/loans-api
