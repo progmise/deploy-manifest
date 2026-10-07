@@ -1,29 +1,27 @@
 # Deploy manifest — one released set of components deployable together.
 # version: bump it per release (semver). A PR bumps it; merge creates a draft
 # GitHub Release; publishing the release approves it for `deploy.yml`.
-# environments[]: declared deploy targets (name + type).
-# infrastructures[]: infra targets bound to an env — `type: vercel` uses the
-# consumer repo's VERCEL_* secrets/vars; `credentialsId` names the GitHub
-# secret that must exist there. `type: artifact-store` documents the registry.
+# environments[]: declared deploy targets (name + type), each carrying its
+# own infrastructures[] — the OAM model. Infra entries are free-form fields
+# plus required `id`/`type` (e.g. type: vercel uses the consumer repo's
+# VERCEL_* secrets/vars; credentialsId names the GitHub secret it must have).
 # components[]: repo = GitHub repo, tag = existing git tag (its Docker image
 # <DOCKER_USERNAME>/<repo>:<tag> must exist), needs = deploy-after deps,
 # infra = infrastructure ids this component deploys to (optional; a bound
 # component can only deploy to envs where at least one of its infra ids lives).
-version: 1.1.0
+version: 1.2.0
 environments:
   - name: pro
     type: production
-infrastructures:
-  - id: loans-api-pro
-    type: vercel
-    env: pro
-    project: loans-api
-    credentialsId: VERCEL_TOKEN
-  - id: docker-hub
-    type: artifact-store
-    env: pro
-    registry: docker.io
-    namespace: progmise
+    infrastructures:
+      - id: loans-api-pro
+        type: vercel
+        project: loans-api
+        credentialsId: VERCEL_TOKEN
+      - id: docker-hub
+        type: artifact-store
+        registry: docker.io
+        namespace: progmise
 components:
   - name: loans-api
     repo: progmise/loans-api
