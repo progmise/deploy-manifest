@@ -19,6 +19,8 @@ environments:
         properties:
           project: loans-api
           credentialsId: VERCEL_TOKEN
+          orgId: VERCEL_ORG_ID
+          projectId: VERCEL_PROJECT_ID
       - id: docker-hub
         type: artifact-store
         properties:
