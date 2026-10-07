@@ -14,8 +14,9 @@ environments:                     # optional — declared deploy targets
     infrastructures:              # infra targets nested under each env (OAM)
       - id: loans-api-pro
         type: vercel              # vercel | artifact-store | ...
-        project: loans-api        # provider-specific fields are free-form
-        credentialsId: VERCEL_TOKEN  # name of the secret in the consumer
+        properties:               # free-form provider fields (OAM style)
+          project: loans-api
+          credentialsId: VERCEL_TOKEN  # name of the secret in the consumer
 components:
   - name: loans-api
     repo: progmise/loans-api
