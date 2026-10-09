@@ -9,7 +9,7 @@
 # <DOCKER_USERNAME>/<repo>:<tag> must exist), needs = deploy-after deps,
 # infra = infrastructure ids this component deploys to (optional; a bound
 # component can only deploy to envs where at least one of its infra ids lives).
-version: 1.2.0
+version: 1.3.0
 environments:
   - name: pro
     type: production
@@ -18,6 +18,20 @@ environments:
         type: vercel
         properties:
           project: loans-api
+          orgId: VERCEL_ORG_ID
+          projectId: VERCEL_PROJECT_ID
+          credentialsId: VERCEL_TOKEN
+      - id: deploy-orchestrator-api-pro
+        type: vercel
+        properties:
+          project: deploy-orchestrator-api
+          orgId: VERCEL_ORG_ID
+          projectId: VERCEL_PROJECT_ID
+          credentialsId: VERCEL_TOKEN
+      - id: deploy-orchestrator-pro
+        type: vercel
+        properties:
+          project: deploy-orchestrator
           orgId: VERCEL_ORG_ID
           projectId: VERCEL_PROJECT_ID
           credentialsId: VERCEL_TOKEN
@@ -34,3 +48,13 @@ components:
     tag: "0.1.0"
     needs: []
     infra: [loans-api-pro]
+  - name: deploy-orchestrator-api
+    repo: progmise/deploy-orchestrator-api
+    tag: "0.2.0"
+    needs: []
+    infra: [deploy-orchestrator-api-pro]
+  - name: deploy-orchestrator
+    repo: progmise/deploy-orchestrator
+    tag: "1.3.0"
+    needs: [deploy-orchestrator-api]
+    infra: [deploy-orchestrator-pro]
