@@ -13,6 +13,10 @@ on:
         default: pro
         type: choice
         options: [pro, cert, pre]
+      release_no:
+        description: 'Dashboard release number (RLSE…) — required for pro'
+        required: false
+        type: string
 
 permissions:
   contents: read
@@ -26,3 +30,4 @@ jobs:
     with:
       version: ${{ inputs.version }}
       environment: ${{ inputs.environment }}
+      release_no: ${{ inputs.release_no }}
