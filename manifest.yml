@@ -10,7 +10,7 @@
 # infra = infrastructure ids this component deploys to (REQUIRED — the ci_id
 # list binding the component to infrastructures[].id; the orchestrator
 # dispatches one deploy per ci_id that lives in the target environment).
-version: 1.6.0
+version: 1.7.0
 environments:
   - name: pre
     type: preproduction
@@ -75,11 +75,11 @@ components:
     infra: [loans-api-pre, loans-api-pro]
   - name: deploy-orchestrator-api
     repo: progmise/deploy-orchestrator-api
-    tag: "0.2.0"
+    tag: "0.3.0"
     needs: []
     infra: [deploy-orchestrator-api-pre, deploy-orchestrator-api-pro]
   - name: deploy-orchestrator
     repo: progmise/deploy-orchestrator
-    tag: "1.6.0"
+    tag: "1.7.0"
     needs: [deploy-orchestrator-api]
     infra: [deploy-orchestrator-pre, deploy-orchestrator-pro]
