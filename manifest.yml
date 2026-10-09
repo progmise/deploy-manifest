@@ -9,7 +9,7 @@
 # <DOCKER_USERNAME>/<repo>:<tag> must exist), needs = deploy-after deps,
 # infra = infrastructure ids this component deploys to (optional; a bound
 # component can only deploy to envs where at least one of its infra ids lives).
-version: 1.4.0
+version: 1.5.0
 environments:
   - name: pro
     type: production
@@ -55,6 +55,6 @@ components:
     infra: [deploy-orchestrator-api-pro]
   - name: deploy-orchestrator
     repo: progmise/deploy-orchestrator
-    tag: "1.4.0"
+    tag: "1.5.0"
     needs: [deploy-orchestrator-api]
     infra: [deploy-orchestrator-pro]
