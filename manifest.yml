@@ -7,10 +7,35 @@
 # repo's VERCEL_* secrets/vars; credentialsId names the GitHub secret).
 # components[]: repo = GitHub repo, tag = existing git tag (its Docker image
 # <DOCKER_USERNAME>/<repo>:<tag> must exist), needs = deploy-after deps,
-# infra = infrastructure ids this component deploys to (optional; a bound
-# component can only deploy to envs where at least one of its infra ids lives).
+# infra = infrastructure ids this component deploys to (REQUIRED — the ci_id
+# list binding the component to infrastructures[].id; the orchestrator
+# dispatches one deploy per ci_id that lives in the target environment).
 version: 1.6.0
 environments:
+  - name: pre
+    type: preproduction
+    infrastructures:
+      - id: loans-api-pre
+        type: vercel
+        properties:
+          project: loans-api
+          orgId: VERCEL_ORG_ID
+          projectId: VERCEL_PROJECT_ID
+          credentialsId: VERCEL_TOKEN
+      - id: deploy-orchestrator-api-pre
+        type: vercel
+        properties:
+          project: deploy-orchestrator-api
+          orgId: VERCEL_ORG_ID
+          projectId: VERCEL_PROJECT_ID
+          credentialsId: VERCEL_TOKEN
+      - id: deploy-orchestrator-pre
+        type: vercel
+        properties:
+          project: deploy-orchestrator
+          orgId: VERCEL_ORG_ID
+          projectId: VERCEL_PROJECT_ID
+          credentialsId: VERCEL_TOKEN
   - name: pro
     type: production
     infrastructures:
@@ -47,14 +72,14 @@ components:
     repo: progmise/loans-api
     tag: "0.1.0"
     needs: []
-    infra: [loans-api-pro]
+    infra: [loans-api-pre, loans-api-pro]
   - name: deploy-orchestrator-api
     repo: progmise/deploy-orchestrator-api
     tag: "0.2.0"
     needs: []
-    infra: [deploy-orchestrator-api-pro]
+    infra: [deploy-orchestrator-api-pre, deploy-orchestrator-api-pro]
   - name: deploy-orchestrator
     repo: progmise/deploy-orchestrator
     tag: "1.6.0"
     needs: [deploy-orchestrator-api]
-    infra: [deploy-orchestrator-pro]
+    infra: [deploy-orchestrator-pre, deploy-orchestrator-pro]
