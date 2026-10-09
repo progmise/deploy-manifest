@@ -32,11 +32,12 @@ components:
     repo: progmise/loans-api
     tag: "0.1.0"          # git tag + Docker Hub image must exist
     needs: []             # deploy-after deps (component names, acyclic)
-    infra: [loans-api-pro]
+    infra: [loans-api-pro]  # REQUIRED — ci_ids binding to infrastructures[].id
 ```
 
 CI rules: semver `version`, unique env/component/infra ids, `needs` ⊆
-components (acyclic), each `repo:tag` exists, `infra` ⊆ infra ids. A PR that
+components (acyclic), each `repo:tag` exists, `infra` non-empty and ⊆ infra
+ids. A PR that
 registers a component **fails validation until its tag exists** — merge the
 registration after the component's first release.
 

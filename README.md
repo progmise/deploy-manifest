@@ -24,15 +24,18 @@ components:
     repo: progmise/loans-api
     tag: "0.1.0"                  # git tag + Docker Hub image must exist
     needs: []                     # deploy-after deps (component names)
-    infra: [loans-api-pro]        # optional — infra ids this component targets
+    infra: [loans-api-pro]        # REQUIRED — ci_ids binding the component to
+                                  # infrastructures[].id; the orchestrator
+                                  # dispatches one deploy per ci_id in the
+                                  # target environment
 ```
 
 Validation rules (CI): semver `version`, unique env/component names and infra
 ids, each `environments[].infrastructures[]` entry has `id` + `type`, `needs` ⊆
-component names (acyclic), each `repo:tag` exists, `components[].infra` ⊆ infra
-ids. At deploy time the `environment` input must exist in `environments` (when
-declared) and a component bound via `infra` fails if none of its targets lives
-in that env. Reference naming convention (OAM style): any `*Id` property names
+component names (acyclic), each `repo:tag` exists, `components[].infra`
+non-empty and ⊆ infra ids. At deploy time the `environment` input must exist
+in `environments` and every component must have at least one infra binding in
+that env. Reference naming convention (OAM style): any `*Id` property names
 a credential or identifier held in the *consumer repo's* GitHub secrets or
 variables — values never live here.
 
@@ -49,11 +52,15 @@ flowchart LR
 1. **PR** that bumps `version` and adjusts `components` → CI validates the
    manifest and renders the deploy plan.
 2. **Merge to main** → a *draft* release `v<version>` is created.
-3. **Publish the release** to approve it.
-4. **Run Deploy** (Actions → Deploy) with `version` + `environment`
-   (`pro`/`cert`/`pre` — must be in `vars.DEPLOY_ENVIRONMENTS`). Components
-   deploy level by level following `needs`; each repo's `deploy.yml`
-   (`app-deploy`) does the actual Vercel deploy.
+3. **Publish the release** to approve it — done from the deploy-orchestrator
+   dashboard (Releases → release → publish the `draft` tag), which calls the
+   GitHub API server-side.
+4. **Deploy** from the dashboard per environment (`pre`, `pro`). It dispatches
+   `deploy.yml` with `version` + `environment` + `release_no` (`RLSE…`).
+   Production deploys require a dashboard `release_no` — a bare manual
+   dispatch of `pro` fails in `orch-deploy` Setup. Components deploy level by
+   level following `needs`; each repo's `deploy.yml` (`app-deploy`) does the
+   actual Vercel deploy, once per `ci_id` bound to that env.
 
 ## Setup
 
