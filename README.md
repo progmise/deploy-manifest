@@ -55,7 +55,7 @@ flowchart LR
 3. **Publish the release** to approve it — done from the deploy-orchestrator
    dashboard (Releases → release → publish the `draft` tag), which calls the
    GitHub API server-side.
-4. **Deploy** from the dashboard per environment (`pre`, `pro`). It dispatches
+4. **Deploy** from the dashboard per environment (`pre`, `cert`, `pro`). It dispatches
    `deploy.yml` with `version` + `environment` + `release_no` (`RLSE…`).
    Production deploys require a dashboard `release_no` — a bare manual
    dispatch of `pro` fails in `orch-deploy` Setup. Components deploy level by

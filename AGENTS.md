@@ -27,6 +27,7 @@ environments:             # optional — declared deploy targets (OAM)
           project: loans-api
           credentialsId: VERCEL_TOKEN     # names a consumer repo secret
           orgId: VERCEL_ORG_ID            # names a consumer repo variable
+          projectId: VERCEL_PROJECT_ID    # idem — provisioned lazily when empty
 components:
   - name: loans-api
     repo: progmise/loans-api
@@ -48,6 +49,12 @@ merge → `release.yml` (`orch-release` drafts Release `v<version>` + mermaid
 graph) → **publishing the release approves it** → `deploy.yml` (`orch-deploy`
 topo-sorts by `needs` and dispatches each consumer's `deploy.yml`, level by
 level; needs `ORCHESTRATOR_TOKEN` PAT with `actions:write`).
+
+`deploy.yml` dispatch inputs: `version` (manifest release), `environment`
+(`pre`/`cert`/`pro`), `release_no` (dashboard RLSE number — required for
+`pro`). Component `infra` lists are filtered to the target environment's
+infrastructures; the dashboard passes `release_no` so `pro` deploys are
+tied to an approved RLSE record.
 
 The registration PR for a **new** component is opened automatically by
 `deploy-orchestrator-api`'s provisioner — don't hand-edit those PRs' branch
