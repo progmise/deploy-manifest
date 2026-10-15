@@ -23,6 +23,7 @@ components:
   - name: loans-api
     repo: progmise/loans-api
     tag: "0.1.0"                  # git tag + Docker Hub image must exist
+    type: app                     # app (default) | configmap
     needs: []                     # deploy-after deps (component names)
     infra: [loans-api-pro]        # REQUIRED — ci_ids binding the component to
                                   # infrastructures[].id; the orchestrator
@@ -30,10 +31,28 @@ components:
                                   # target environment
 ```
 
+ConfigMap components (`type: configmap`) deploy env vars instead of an
+image — the Docker Hub check is skipped and the orchestrator passes the
+bound infra's `properties.project` (the target Vercel project) as a
+`project` input. A CM binds to the **app's** ci_ids, and the app lists the
+CM in `needs:` so the variables land first:
+
+```yaml
+  - name: loans-api-cm
+    repo: progmise/loans-api-cm
+    tag: "0.1.0"
+    type: configmap
+    needs: []
+    infra: [loans-api-pro]        # same ci_ids as the app it configures
+  - name: loans-api
+    needs: [loans-api-cm]         # config lands before the app deploys
+```
+
 Validation rules (CI): semver `version`, unique env/component names and infra
 ids, each `environments[].infrastructures[]` entry has `id` + `type`, `needs` ⊆
 component names (acyclic), each `repo:tag` exists, `components[].infra`
-non-empty and ⊆ infra ids. At deploy time the `environment` input must exist
+non-empty and ⊆ infra ids, `components[].type` ∈ `app|configmap`. At deploy
+time the `environment` input must exist
 in `environments` and every component must have at least one infra binding in
 that env. Reference naming convention (OAM style): any `*Id` property names
 a credential or identifier held in the *consumer repo's* GitHub secrets or
