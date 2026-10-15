@@ -32,13 +32,29 @@ components:
   - name: loans-api
     repo: progmise/loans-api
     tag: "0.1.0"          # git tag + Docker Hub image must exist
+    type: app             # app (default) | configmap
     needs: []             # deploy-after deps (component names, acyclic)
     infra: [loans-api-pro]  # REQUIRED — ci_ids binding to infrastructures[].id
 ```
 
+ConfigMap components (`type: configmap`) ship env vars, not an image: the
+tag check still applies but the Docker Hub check is skipped, and at deploy
+time the orchestrator passes the bound infra's `properties.project` as a
+`project` input. They bind to the *app's* infra ids and the app declares
+`needs: [<cm-name>]` so its env vars land before the app deploys:
+
+```yaml
+  - name: loans-api-cm
+    repo: progmise/loans-api-cm
+    tag: "0.1.0"
+    type: configmap
+    needs: []
+    infra: [loans-api-pro]   # same ci_ids as the app it configures
+```
+
 CI rules: semver `version`, unique env/component/infra ids, `needs` ⊆
 components (acyclic), each `repo:tag` exists, `infra` non-empty and ⊆ infra
-ids. A PR that
+ids, `type` ∈ `app|configmap`. A PR that
 registers a component **fails validation until its tag exists** — merge the
 registration after the component's first release.
 
