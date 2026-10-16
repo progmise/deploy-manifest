@@ -23,7 +23,7 @@ components:
   - name: loans-api
     repo: progmise/loans-api
     tag: "0.1.0"                  # git tag + Docker Hub image must exist
-    type: app                     # app (default) | configmap
+    type: app                     # app (default) | configmap | secrets
     needs: []                     # deploy-after deps (component names)
     infra: [loans-api-pro]        # REQUIRED — ci_ids binding the component to
                                   # infrastructures[].id; the orchestrator
@@ -44,14 +44,20 @@ CM in `needs:` so the variables land first:
     type: configmap
     needs: []
     infra: [loans-api-pro]        # same ci_ids as the app it configures
+  - name: loans-api-secrets       # same mechanics — declares secret names;
+    repo: progmise/loans-api-secrets  # values come from the credential store
+    tag: "0.1.0"                  # (`NAME__ENV`), deployed as Vercel
+    type: secrets                 # `sensitive` env vars
+    needs: []
+    infra: [loans-api-pro]
   - name: loans-api
-    needs: [loans-api-cm]         # config lands before the app deploys
+    needs: [loans-api-cm, loans-api-secrets]  # config lands before the app deploys
 ```
 
 Validation rules (CI): semver `version`, unique env/component names and infra
 ids, each `environments[].infrastructures[]` entry has `id` + `type`, `needs` ⊆
 component names (acyclic), each `repo:tag` exists, `components[].infra`
-non-empty and ⊆ infra ids, `components[].type` ∈ `app|configmap`. At deploy
+non-empty and ⊆ infra ids, `components[].type` ∈ `app|configmap|secrets`. At deploy
 time the `environment` input must exist
 in `environments` and every component must have at least one infra binding in
 that env. Reference naming convention (OAM style): any `*Id` property names

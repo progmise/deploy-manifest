@@ -32,7 +32,7 @@ components:
   - name: loans-api
     repo: progmise/loans-api
     tag: "0.1.0"          # git tag + Docker Hub image must exist
-    type: app             # app (default) | configmap
+    type: app             # app (default) | configmap | secrets
     needs: []             # deploy-after deps (component names, acyclic)
     infra: [loans-api-pro]  # REQUIRED — ci_ids binding to infrastructures[].id
 ```
@@ -52,9 +52,14 @@ time the orchestrator passes the bound infra's `properties.project` as a
     infra: [loans-api-pro]   # same ci_ids as the app it configures
 ```
 
+Secrets components (`type: secrets`) follow the exact same mechanics — the
+difference is the repo only *declares* secret names (values live in the
+credential store, loaded via the dashboard Seguridad view) and deploy
+upserts them as Vercel `sensitive` env vars.
+
 CI rules: semver `version`, unique env/component/infra ids, `needs` ⊆
 components (acyclic), each `repo:tag` exists, `infra` non-empty and ⊆ infra
-ids, `type` ∈ `app|configmap`. A PR that
+ids, `type` ∈ `app|configmap|secrets`. A PR that
 registers a component **fails validation until its tag exists** — merge the
 registration after the component's first release.
 
