@@ -22,14 +22,14 @@ environments:
           orgId: VERCEL_ORG_ID
           projectId: VERCEL_PROJECT_ID
           credentialsId: VERCEL_TOKEN
-      - id: deploy-orchestrator-api-pre
+      - id: ensemble-api-pre
         type: vercel
         properties:
           project: deploy-orchestrator-api
           orgId: VERCEL_ORG_ID
           projectId: VERCEL_PROJECT_ID
           credentialsId: VERCEL_TOKEN
-      - id: deploy-orchestrator-pre
+      - id: ensemble-web-pre
         type: vercel
         properties:
           project: deploy-orchestrator
@@ -46,14 +46,14 @@ environments:
           orgId: VERCEL_ORG_ID
           projectId: VERCEL_PROJECT_ID
           credentialsId: VERCEL_TOKEN
-      - id: deploy-orchestrator-api-pro
+      - id: ensemble-api-pro
         type: vercel
         properties:
           project: deploy-orchestrator-api
           orgId: VERCEL_ORG_ID
           projectId: VERCEL_PROJECT_ID
           credentialsId: VERCEL_TOKEN
-      - id: deploy-orchestrator-pro
+      - id: ensemble-web-pro
         type: vercel
         properties:
           project: deploy-orchestrator
@@ -73,13 +73,13 @@ components:
     tag: "0.1.0"
     needs: []
     infra: [loans-api-pre, loans-api-pro]
-  - name: deploy-orchestrator-api
-    repo: progmise/deploy-orchestrator-api
+  - name: ensemble-api
+    repo: progmise/ensemble-api
     tag: "0.3.0"
     needs: []
-    infra: [deploy-orchestrator-api-pre, deploy-orchestrator-api-pro]
-  - name: deploy-orchestrator
-    repo: progmise/deploy-orchestrator
+    infra: [ensemble-api-pre, ensemble-api-pro]
+  - name: ensemble-web
+    repo: progmise/ensemble-web
     tag: "1.7.0"
-    needs: [deploy-orchestrator-api]
-    infra: [deploy-orchestrator-pre, deploy-orchestrator-pro]
+    needs: [ensemble-api]
+    infra: [ensemble-web-pre, ensemble-web-pro]
