@@ -25,14 +25,14 @@ environments:
       - id: ensemble-api-pre
         type: vercel
         properties:
-          project: ensemble-ops-api
+          project: ensemble-api
           orgId: VERCEL_ORG_ID
           projectId: VERCEL_PROJECT_ID
           credentialsId: VERCEL_TOKEN
       - id: ensemble-web-pre
         type: vercel
         properties:
-          project: ensemble-ops
+          project: ensemble-web
           orgId: VERCEL_ORG_ID
           projectId: VERCEL_PROJECT_ID
           credentialsId: VERCEL_TOKEN
@@ -49,14 +49,14 @@ environments:
       - id: ensemble-api-pro
         type: vercel
         properties:
-          project: ensemble-ops-api
+          project: ensemble-api
           orgId: VERCEL_ORG_ID
           projectId: VERCEL_PROJECT_ID
           credentialsId: VERCEL_TOKEN
       - id: ensemble-web-pro
         type: vercel
         properties:
-          project: ensemble-ops
+          project: ensemble-web
           orgId: VERCEL_ORG_ID
           projectId: VERCEL_PROJECT_ID
           credentialsId: VERCEL_TOKEN
