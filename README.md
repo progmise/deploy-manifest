@@ -1,7 +1,7 @@
 # deploy-manifest
 
 Declarative deploy orchestrator for the progmise APIs — the minimal equivalent
-of Ensemble/OAM. `manifest.yml` declares a **release**: a version plus the set of
+of OAM. `manifest.yml` declares a **release**: a version plus the set of
 components (repo + tag + dependencies) to deploy together.
 
 ## `manifest.yml` schema

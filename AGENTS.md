@@ -1,7 +1,7 @@
 # AGENTS.md
 
 Guide for working on **deploy-manifest** — the declarative deploy
-orchestrator for the progmise platform (minimal Ensemble/OAM equivalent).
+orchestrator for the progmise platform (minimal OAM equivalent).
 `manifest.yml` declares a release: a version plus the set of components
 (repo + tag + dependencies) deployed together.
 
