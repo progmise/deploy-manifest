@@ -50,7 +50,7 @@ topo-sorts by `needs` and dispatches each consumer's `deploy.yml`, level by
 level; needs `ORCHESTRATOR_TOKEN` PAT with `actions:write`).
 
 The registration PR for a **new** component is opened automatically by
-`deploy-orchestrator-api`'s provisioner — don't hand-edit those PRs' branch
+`ensemble-api`'s provisioner — don't hand-edit those PRs' branch
 content; review/merge after the repo's `0.1.0` tag exists.
 
 ## Conventions

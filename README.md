@@ -52,7 +52,7 @@ flowchart LR
 1. **PR** that bumps `version` and adjusts `components` → CI validates the
    manifest and renders the deploy plan.
 2. **Merge to main** → a *draft* release `v<version>` is created.
-3. **Publish the release** to approve it — done from the deploy-orchestrator
+3. **Publish the release** to approve it — done from the Ensemble
    dashboard (Releases → release → publish the `draft` tag), which calls the
    GitHub API server-side.
 4. **Deploy** from the dashboard per environment (`pre`, `pro`). It dispatches
