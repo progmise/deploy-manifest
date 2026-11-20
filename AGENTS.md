@@ -26,15 +26,15 @@ environments:             # optional — declared deploy targets (OAM)
   - name: pro
     type: production
     infrastructures:
-      - id: loans-api-pro
+      - id: ensemble-api-pro
         type: vercel      # vercel | artifact-store | ...
         properties:       # free-form provider fields
-          project: loans-api
+          project: ensemble-api
           credentialsId: VERCEL_TOKEN     # names a consumer repo secret
           orgId: VERCEL_ORG_ID            # names a consumer repo variable
 components:
-  - name: loans-api
-    repo: progmise/loans-api
+  - name: ensemble-api
+    repo: progmise/ensemble-api
     version: "0.1.0"      # git tag + Docker Hub image must exist
     rollback_version: "0.0.9"  # previous deployable version (optional)
     needs: []             # deploy-after deps (component names, acyclic)
