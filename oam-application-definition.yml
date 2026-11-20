@@ -89,13 +89,13 @@ components:
     infra: [loans-api-pre, loans-api-pro]
   - name: ensemble-api
     repo: progmise/ensemble-api
-    version: "0.3.0"
-    rollback_version: "0.2.0"
+    version: "0.3.2"
+    rollback_version: "0.3.0"
     needs: []
     infra: [ensemble-api-pre, ensemble-api-pro]
   - name: ensemble-web
     repo: progmise/ensemble-web
-    version: "1.7.0"
-    rollback_version: "1.6.0"
+    version: "1.7.2"
+    rollback_version: "1.7.0"
     needs: [ensemble-api]
     infra: [ensemble-web-pre, ensemble-web-pro]
