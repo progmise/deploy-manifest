@@ -9,10 +9,11 @@
 # trails[]: ordered promotion paths — environments in `order` sequence.
 # components[]: repo = GitHub repo, version = existing git tag (its Docker
 # image <DOCKER_USERNAME>/<repo>:<version> must exist), rollback_version =
-# previous deployable version, needs = deploy-after deps, infra =
-# infrastructure ids this component deploys to (REQUIRED — the ci_id list
-# binding the component to infrastructures[].id; the orchestrator dispatches
-# one deploy per ci_id that lives in the target environment).
+# previous deployable version, needs = deploy-after deps. Which ci_ids a
+# component deploys to is declared in its own repo's `.deploy/targets.yml`
+# (each must match an infrastructures[].id here; the orchestrator dispatches
+# one deploy per ci_id in the target environment). `infra:` may still
+# override per component when needed.
 kind: Application
 version: v2
 metadata:
@@ -86,16 +87,13 @@ components:
     repo: progmise/loans-api
     version: "0.1.0"
     needs: []
-    infra: [loans-api-pre, loans-api-pro]
   - name: ensemble-api
     repo: progmise/ensemble-api
     version: "0.3.3"
     rollback_version: "0.3.2"
     needs: []
-    infra: [ensemble-api-pre, ensemble-api-pro]
   - name: ensemble-web
     repo: progmise/ensemble-web
     version: "1.7.3"
     rollback_version: "1.7.2"
     needs: [ensemble-api]
-    infra: [ensemble-web-pre, ensemble-web-pro]
