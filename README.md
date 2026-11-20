@@ -1,13 +1,18 @@
-# deploy-manifest
+# ensemble-app-model
 
-Declarative deploy orchestrator for the progmise APIs — the minimal equivalent
-of Ensemble/OAM. `manifest.yml` declares a **release**: a version plus the set of
-components (repo + tag + dependencies) to deploy together.
+OAM application model for the **ensemble** application — the Gluon-style
+`oam-application-definition.yml` declares a **release**: a version plus the
+set of components (repo + version + dependencies) to deploy together.
+The repo itself is a catalog component (`app-model` kind) of `ensemble`.
 
-## `manifest.yml` schema
+## `oam-application-definition.yml` schema
 
 ```yaml
-version: 1.2.0                    # semver — merge to main drafts release v1.2.0
+kind: Application                 # OAM document kind
+version: v2                       # OAM schema version
+metadata:
+  name: ensemble                  # application this model describes
+  version: 1.2.0                  # semver — merge to main drafts release v1.2.0
 environments:                     # optional — declared deploy targets
   - name: pro
     type: production
@@ -22,17 +27,25 @@ environments:                     # optional — declared deploy targets
 components:
   - name: loans-api
     repo: progmise/loans-api
-    tag: "0.1.0"                  # git tag + Docker Hub image must exist
+    version: "0.1.0"              # git tag + Docker Hub image must exist
+    rollback_version: "0.0.9"     # previous deployable version (optional)
     needs: []                     # deploy-after deps (component names)
     infra: [loans-api-pro]        # REQUIRED — ci_ids binding the component to
                                   # infrastructures[].id; the orchestrator
                                   # dispatches one deploy per ci_id in the
                                   # target environment
+trails:                           # ordered promotion paths
+  - name: pre-pro-trails
+    environments:
+      - name: pre
+        order: 1
+      - name: pro
+        order: 2
 ```
 
-Validation rules (CI): semver `version`, unique env/component names and infra
+Validation rules (CI): semver `metadata.version`, unique env/component names and infra
 ids, each `environments[].infrastructures[]` entry has `id` + `type`, `needs` ⊆
-component names (acyclic), each `repo:tag` exists, `components[].infra`
+component names (acyclic), each `repo:version` exists, `components[].infra`
 non-empty and ⊆ infra ids. At deploy time the `environment` input must exist
 in `environments` and every component must have at least one infra binding in
 that env. Reference naming convention (OAM style): any `*Id` property names
@@ -43,16 +56,16 @@ variables — values never live here.
 
 ```mermaid
 flowchart LR
-    PR["PR bumps manifest.yml"] -->|"ci.yml → orch-ci"| V["Validate:<br/>schema, semver, tags,<br/>Docker images exist"]
+    PR["PR bumps oam-application-definition.yml"] -->|"ci.yml → orch-ci"| V["Validate:<br/>schema, semver, tags,<br/>Docker images exist"]
     M["merge → main"] -->|"release.yml → orch-release"| R["draft GitHub<br/>Release v&lt;version&gt;<br/>+ mermaid graph"]
     R --> P["publish release<br/>= approval"]
     P -->|"deploy.yml → orch-deploy"| D["topo-sort by needs<br/>→ dispatch app-deploy<br/>per component, level by level"]
 ```
 
-1. **PR** that bumps `version` and adjusts `components` → CI validates the
+1. **PR** that bumps `metadata.version` and adjusts `components` → CI validates the
    manifest and renders the deploy plan.
-2. **Merge to main** → a *draft* release `v<version>` is created.
-3. **Publish the release** to approve it — done from the deploy-orchestrator
+2. **Merge to main** → a *draft* release `v<metadata.version>` is created.
+3. **Publish the release** to approve it — done from the Ensemble
    dashboard (Releases → release → publish the `draft` tag), which calls the
    GitHub API server-side.
 4. **Deploy** from the dashboard per environment (`pre`, `pro`). It dispatches
@@ -65,7 +78,7 @@ flowchart LR
 ## Setup
 
 - Secret `ORCHESTRATOR_TOKEN`: PAT (fine-grained) with **Actions: write** on
-  every repo listed in `manifest.yml` — needed to dispatch their deploys.
+  every repo listed in the definition — needed to dispatch their deploys.
 - Var `DEPLOY_ENVIRONMENTS` (JSON, default `["pro"]`), `DOCKER_USERNAME`.
 - Optional `GRAFANA_OTLP_ENDPOINT`/`GRAFANA_OTLP_AUTH` for tracing.
 
