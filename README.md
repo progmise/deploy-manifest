@@ -30,8 +30,8 @@ components:
     version: "0.1.0"              # git tag + Docker Hub image must exist
     rollback_version: "0.0.9"     # previous deployable version (optional)
     needs: []                     # deploy-after deps (component names)
-    infra: [loans-api-pro]        # REQUIRED — ci_ids binding the component to
-                                  # infrastructures[].id; the orchestrator
+    # deploy targets (ci_ids) live in the repo's .deploy/targets.yml;
+    # the orchestrator
                                   # dispatches one deploy per ci_id in the
                                   # target environment
 trails:                           # ordered promotion paths
@@ -45,9 +45,9 @@ trails:                           # ordered promotion paths
 
 Validation rules (CI): semver `metadata.version`, unique env/component names and infra
 ids, each `environments[].infrastructures[]` entry has `id` + `type`, `needs` ⊆
-component names (acyclic), each `repo:version` exists, `components[].infra`
-non-empty and ⊆ infra ids. At deploy time the `environment` input must exist
-in `environments` and every component must have at least one infra binding in
+component names (acyclic), each `repo:version` exists, each component's deploy
+targets (`.deploy/targets.yml` or `infra:` override) non-empty and ⊆ infra ids. At deploy time the `environment` input must exist
+in `environments` and every component must have at least one deploy target in
 that env. Reference naming convention (OAM style): any `*Id` property names
 a credential or identifier held in the *consumer repo's* GitHub secrets or
 variables — values never live here.

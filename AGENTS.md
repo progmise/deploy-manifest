@@ -38,7 +38,8 @@ components:
     version: "0.1.0"      # git tag + Docker Hub image must exist
     rollback_version: "0.0.9"  # previous deployable version (optional)
     needs: []             # deploy-after deps (component names, acyclic)
-    infra: [loans-api-pro]  # REQUIRED — ci_ids binding to infrastructures[].id
+    # deploy targets (ci_ids) live in the repo's .deploy/targets.yml
+    # (infra: [id,...] only as an explicit override)
 trails:                   # ordered promotion paths
   - name: pre-pro-trails
     environments:
@@ -49,8 +50,9 @@ trails:                   # ordered promotion paths
 ```
 
 CI rules: semver `metadata.version`, unique env/component/infra ids, `needs` ⊆
-components (acyclic), each `repo:version` exists, `infra` non-empty and ⊆ infra
-ids. A PR that
+components (acyclic), each `repo:version` exists, and the component's
+deploy targets (its repo's `.deploy/targets.yml`, or `infra:` override)
+non-empty and ⊆ infra ids. A PR that
 registers a component **fails validation until its tag exists** — merge the
 registration after the component's first release.
 
