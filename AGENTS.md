@@ -1,7 +1,7 @@
 # AGENTS.md
 
 Guide for working on **ensemble-app-model** — the OAM application model
-of the `ensemble` application (Gluon-style app-model; the repo is itself a
+of the `ensemble` application (OAM app-model repo; it is itself a
 catalog component of kind `app-model`).
 `oam-application-definition.yml` declares a release: a version plus the set
 of components (repo + version + dependencies) deployed together.
