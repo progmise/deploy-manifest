@@ -1,16 +1,23 @@
-# Deploy manifest — one released set of components deployable together.
-# version: bump it per release (semver). A PR bumps it; merge creates a draft
-# GitHub Release; publishing the release approves it for `deploy.yml`.
+# OAM application definition — Ensemble's app-model repo.
+# One released set of components deployable together — metadata.version is the
+# release version (bump it per release; a PR merges → draft GitHub Release;
+# publishing the release approves it for deploy.yml).
 # environments[]: declared deploy targets (name + type), each carrying its
-# own infrastructures[] — the OAM model. Infra entries require `id`/`type`
-# plus a free-form `properties:` map (e.g. type: vercel uses the consumer
-# repo's VERCEL_* secrets/vars; credentialsId names the GitHub secret).
-# components[]: repo = GitHub repo, tag = existing git tag (its Docker image
-# <DOCKER_USERNAME>/<repo>:<tag> must exist), needs = deploy-after deps,
-# infra = infrastructure ids this component deploys to (REQUIRED — the ci_id
-# list binding the component to infrastructures[].id; the orchestrator
-# dispatches one deploy per ci_id that lives in the target environment).
-version: 1.7.0
+# own infrastructures[] — infra entries require `id`/`type` plus a free-form
+# `properties:` map (type: vercel uses the consumer repo's VERCEL_* secrets/
+# vars; credentialsId names the GitHub secret).
+# trails[]: ordered promotion paths — environments in `order` sequence.
+# components[]: repo = GitHub repo, version = existing git tag (its Docker
+# image <DOCKER_USERNAME>/<repo>:<version> must exist), rollback_version =
+# previous deployable version, needs = deploy-after deps, infra =
+# infrastructure ids this component deploys to (REQUIRED — the ci_id list
+# binding the component to infrastructures[].id; the orchestrator dispatches
+# one deploy per ci_id that lives in the target environment).
+kind: Application
+version: v2
+metadata:
+  name: ensemble
+  version: 1.7.1
 environments:
   - name: pre
     type: preproduction
@@ -67,19 +74,28 @@ environments:
           project-path: progmise
           usernameId: DOCKER_USERNAME
           passwordId: DOCKER_TOKEN
+trails:
+  - name: pre-pro-trails
+    environments:
+      - name: pre
+        order: 1
+      - name: pro
+        order: 2
 components:
   - name: loans-api
     repo: progmise/loans-api
-    tag: "0.1.0"
+    version: "0.1.0"
     needs: []
     infra: [loans-api-pre, loans-api-pro]
   - name: ensemble-api
     repo: progmise/ensemble-api
-    tag: "0.3.0"
+    version: "0.3.0"
+    rollback_version: "0.2.0"
     needs: []
     infra: [ensemble-api-pre, ensemble-api-pro]
   - name: ensemble-web
     repo: progmise/ensemble-web
-    tag: "1.7.0"
+    version: "1.7.0"
+    rollback_version: "1.6.0"
     needs: [ensemble-api]
     infra: [ensemble-web-pre, ensemble-web-pro]

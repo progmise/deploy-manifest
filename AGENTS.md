@@ -1,22 +1,27 @@
 # AGENTS.md
 
-Guide for working on **deploy-manifest** — the declarative deploy
-orchestrator for the progmise platform (minimal OAM equivalent).
-`manifest.yml` declares a release: a version plus the set of components
-(repo + tag + dependencies) deployed together.
+Guide for working on **ensemble-app-model** — the OAM application model
+of the `ensemble` application (Gluon-style app-model; the repo is itself a
+catalog component of kind `app-model`).
+`oam-application-definition.yml` declares a release: a version plus the set
+of components (repo + version + dependencies) deployed together.
 
 ## Golden rule
 
-`manifest.yml` is the deployable projection of the platform — every field is
-validated by `orch-ci` and consumed by `topo-deploy.py` in
-`progmise/reusable-workflows` (`@v1`). Never store secrets here: any `*Id`
+`oam-application-definition.yml` is the deployable projection of the
+application — every field is validated by `orch-ci` and consumed by
+`topo-deploy.py` in `progmise/reusable-workflows` (`@v1`). Never store secrets here: any `*Id`
 property **names** a credential/variable held in the *consumer repo's*
 GitHub secrets or variables — values never live in this file.
 
 ## Schema (keep README.md in sync when it changes)
 
 ```yaml
-version: 1.2.0            # semver — merge to main drafts release v<version>
+kind: Application         # OAM document kind
+version: v2               # OAM schema version
+metadata:
+  name: ensemble
+  version: 1.2.0          # semver — merge to main drafts release v<version>
 environments:             # optional — declared deploy targets (OAM)
   - name: pro
     type: production
@@ -30,20 +35,28 @@ environments:             # optional — declared deploy targets (OAM)
 components:
   - name: loans-api
     repo: progmise/loans-api
-    tag: "0.1.0"          # git tag + Docker Hub image must exist
+    version: "0.1.0"      # git tag + Docker Hub image must exist
+    rollback_version: "0.0.9"  # previous deployable version (optional)
     needs: []             # deploy-after deps (component names, acyclic)
     infra: [loans-api-pro]  # REQUIRED — ci_ids binding to infrastructures[].id
+trails:                   # ordered promotion paths
+  - name: pre-pro-trails
+    environments:
+      - name: pre
+        order: 1
+      - name: pro
+        order: 2
 ```
 
-CI rules: semver `version`, unique env/component/infra ids, `needs` ⊆
-components (acyclic), each `repo:tag` exists, `infra` non-empty and ⊆ infra
+CI rules: semver `metadata.version`, unique env/component/infra ids, `needs` ⊆
+components (acyclic), each `repo:version` exists, `infra` non-empty and ⊆ infra
 ids. A PR that
 registers a component **fails validation until its tag exists** — merge the
 registration after the component's first release.
 
 ## Flow
 
-PR bumping `manifest.yml` → `ci.yml` (`orch-ci` validates + renders plan) →
+PR bumping `metadata.version` → `ci.yml` (`orch-ci` validates + renders plan) →
 merge → `release.yml` (`orch-release` drafts Release `v<version>` + mermaid
 graph) → **publishing the release approves it** → `deploy.yml` (`orch-deploy`
 topo-sorts by `needs` and dispatches each consumer's `deploy.yml`, level by
