@@ -1,6 +1,6 @@
 # ensemble-app-model
 
-OAM application model for the **ensemble** application — the Gluon-style
+OAM application model for the **ensemble** application — the OAM-style
 `oam-application-definition.yml` declares a **release**: a version plus the
 set of components (repo + version + dependencies) to deploy together.
 The repo itself is a catalog component (`app-model` kind) of `ensemble`.
