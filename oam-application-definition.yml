@@ -23,13 +23,6 @@ environments:
   - name: pre
     type: preproduction
     infrastructures:
-      - id: loans-api-pre
-        type: vercel
-        properties:
-          project: loans-api
-          orgId: VERCEL_ORG_ID
-          projectId: VERCEL_PROJECT_ID
-          credentialsId: VERCEL_TOKEN
       - id: ensemble-api-pre
         type: vercel
         properties:
@@ -47,13 +40,6 @@ environments:
   - name: pro
     type: production
     infrastructures:
-      - id: loans-api-pro
-        type: vercel
-        properties:
-          project: loans-api
-          orgId: VERCEL_ORG_ID
-          projectId: VERCEL_PROJECT_ID
-          credentialsId: VERCEL_TOKEN
       - id: ensemble-api-pro
         type: vercel
         properties:
@@ -83,10 +69,6 @@ trails:
       - name: pro
         order: 2
 components:
-  - name: loans-api
-    repo: progmise/loans-api
-    version: "0.1.0"
-    needs: []
   - name: ensemble-api
     repo: progmise/ensemble-api
     version: "0.3.3"
